@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscaminas</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 40px);
+      grid-gap: 2px;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      user-select: none;
+    }
+
+    .cell.revealed {
+      background-color: #e0e0e0;
+      cursor: default;
+    }
+
+    .cell.mine {
+      background-color: #ff4d4d;
+    }
+
+    .cell.flagged {
+      background-color: #ffd700;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Buscaminas</h1>
+  <div id="board"></div>
+  <button onclick="startGame()">Reiniciar</button>
+
+  <script>
+    const size = 8;
+    const mineCount = 10;
+    let board = [];
+
+    function startGame() {
+      const boardEl = document.getElementById("board");
+      boardEl.innerHTML = "";
+      board = [];
+
+      // Inicializar tablero
+      for (let y = 0; y < size; y++) {
+        const row = [];
+        for (let x = 0; x < size; x++) {
+          row.push({ mine: false, revealed: false, flagged: false, count: 0 });
+        }
+        board.push(row);
+      }
+
+      // Plantar minas
+      let minesPlanted = 0;
+      while (minesPlanted < mineCount) {
+        const x = Math.floor(Math.random() * size);
+        const y = Math.floor(Math.random() * size);
+        if (!board[y][x].mine) {
+          board[y][x].mine = true;
+          minesPlanted++;
+        }
+      }
+
+      // Calcular números
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          board[y][x].count = countMines(x, y);
+        }
+      }
+
+      // Renderizar
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const cellEl = document.createElement("div");
+          cellEl.className = "cell";
+          cellEl.dataset.x = x;
+          cellEl.dataset.y = y;
+
+          cellEl.addEventListener("click", (e) => {
+            revealCell(x, y);
+          });
+
+          cellEl.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            toggleFlag(x, y);
+          });
+
+          boardEl.appendChild(cellEl);
+        }
+      }
+    }
+
+    function countMines(x, y) {
+      let count = 0;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (
+            nx >= 0 &&
+            nx < size &&
+            ny >= 0 &&
+            ny < size &&
+            board[ny][nx].mine
+          ) {
+            count++;
+          }
+        }
+      }
+      return count;
+    }
+
+    function revealCell(x, y) {
+      const cell = board[y][x];
+      if (cell.revealed || cell.flagged) return;
+
+      cell.revealed = true;
+      const cellEl = getCellElement(x, y);
+      cellEl.classList.add("revealed");
+
+      if (cell.mine) {
+        cellEl.classList.add("mine");
+        cellEl.textContent = "💣";
+        alert("¡Perdiste!");
+        revealAll();
+        return;
+      }
+
+      if (cell.count > 0) {
+        cellEl.textContent = cell.count;
+      } else {
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+              revealCell(nx, ny);
+            }
+          }
+        }
+      }
+    }
+
+    function revealAll() {
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const cell = board[y][x];
+          const cellEl = getCellElement(x, y);
+          if (cell.mine) {
+            cellEl.classList.add("revealed", "mine");
+            cellEl.textContent = "💣";
+          } else if (cell.count > 0) {
+            cellEl.classList.add("revealed");
+            cellEl.textContent = cell.count;
+          }
+        }
+      }
+    }
+
+    function toggleFlag(x, y) {
+      const cell = board[y][x];
+      if (cell.revealed) return;
+      cell.flagged = !cell.flagged;
+      const cellEl = getCellElement(x, y);
+      cellEl.textContent = cell.flagged ? "🚩" : "";
+      cellEl.classList.toggle("flagged", cell.flagged);
+    }
+
+    function getCellElement(x, y) {
+      return document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
