@@ -1,4 +1,4 @@
-package consola;
+package modelos;
 
 public class Experto {
     
