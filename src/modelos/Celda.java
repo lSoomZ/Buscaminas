@@ -12,7 +12,7 @@ public class Celda {
         this.minasAlrededor = 0;
     }
     
-    //Get y Set para la informacion de la celda
+    //Get y Set para la información de la celda
     public boolean getEsMina() {
         return esMina;
     }
