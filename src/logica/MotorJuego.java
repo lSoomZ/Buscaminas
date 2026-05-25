@@ -57,7 +57,7 @@ public class MotorJuego {
                         int filaVecina = i + desplazamientoFila;
                         int columnaVecina = j + desplazamientoColumna;
 
-                        //Control estricto de límites de la matriz
+                        //Control de los límites de la matriz
                         boolean filaValida = filaVecina >= 0 && filaVecina < filas;
                         boolean columnaValida = columnaVecina >= 0 && columnaVecina < columnas;
 

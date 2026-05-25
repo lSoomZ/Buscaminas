@@ -18,12 +18,16 @@ public class Partida {
     }
 
     @Override
+    // El toString hace que al imprimir un objeto Partida se muestre toda su información 
+    // de forma ordenada y legible
     public String toString() {
         String estado = resultado ? "Victoria" : "Derrota";
         return "Dificultad: " + dificultad + " | Tamaño: " + filas + "x" + columnas + 
                 " | Minas: " + minas + " | Tiempo: " + tiempo + "s | Resultado: " + estado;
     }
 
+    // Getters para acceder a la información de la partida desde otras clases
+    
     public String getDificultad() {
         return dificultad;
     }

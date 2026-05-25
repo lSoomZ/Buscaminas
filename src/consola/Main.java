@@ -16,8 +16,7 @@ public class Main {
   public static void main(String[] args) {
     Scanner orden = new Scanner(System.in);
 
-    // Creo el historial una sola vez al arrancar para que las partidas se acumulen
-    // y no se borren
+    // Creo el historial una sola vez al arrancar para que las partidas se acumulen y no se borren
     GestorHistorial gestorHistorial = new GestorHistorial();
 
     // Esta variable mantiene todo el programa encendido hasta que decida salir
@@ -56,8 +55,7 @@ public class Main {
             System.out.print("Ingrese número de columnas: ");
             int columnas = orden.nextInt();
 
-            // Calculo el máximo de minas permitidas para dejar al menos una casilla libre y
-            // poder ganar
+            // Calculo el máximo de minas permitidas para dejar al menos una casilla libre y poder ganar
             int limiteMinas = (filas * columnas) - 1;
             int minas;
 
@@ -109,8 +107,7 @@ public class Main {
         imprimirTablero(tablero);
         System.out.println("=================================");
 
-        // Saco los límites del tablero para avisarle al usuario hasta qué número puede
-        // ingresar
+        // Saco los límites del tablero para avisarle al usuario hasta qué número puede ingresar
         int limiteFilas = tablero.getNivel().getNumFilas() - 1;
         int limiteColumnas = tablero.getNivel().getNumColumnas() - 1;
 
@@ -119,8 +116,7 @@ public class Main {
         System.out.print("Ingrese columna (0 a " + limiteColumnas + "): ");
         int columna = orden.nextInt();
 
-        // Reviso que las coordenadas de verdad existan para que el juego no tire error
-        // y se caiga
+        // Reviso que las coordenadas de verdad existan para que el juego no tire error y se caiga
         if (fila < 0 || fila > limiteFilas || columna < 0 || columna > limiteColumnas) {
           System.out.println("Error: Coordenadas fuera de los límites del tablero.");
           continue; // Vuelvo al principio del ciclo para pedir las coordenadas otra vez
@@ -133,8 +129,7 @@ public class Main {
         Celda celdaObjetivo = tablero.getCelda(fila, columna);
 
         if (accion == 1) {
-          // Si la celda tiene una bandera, bloqueo la acción para que no pierda por
-          // accidente
+          // Si la celda tiene una bandera, bloqueo la acción para que no pierda por accidente
           if (celdaObjetivo.getBandera()) {
             System.out.println("Denegado: La celda está protegida por una bandera.");
           }
@@ -144,8 +139,7 @@ public class Main {
             resultado = false;
             juegoActivo = false;
           }
-          // Si es una celda segura, uso el motor para destaparla (y a sus vecinas si es
-          // un 0)
+          // Si es una celda segura, uso el motor para destaparla (y a sus vecinas si es un 0)
           else {
             motor.descubrirCelda(fila, columna, tablero);
 
@@ -163,7 +157,7 @@ public class Main {
         }
       }
 
-      // --- FIN DE LA PARTIDA ---
+      // Al acabar la partida
 
       // Calculo los segundos exactos que tardó jugando
       long tiempoFinal = System.currentTimeMillis();
@@ -171,8 +165,7 @@ public class Main {
 
       System.out.println("\n=================================");
 
-      // Destapo todo el tablero a la fuerza para que el jugador vea dónde estaban
-      // escondidas las minas
+      // Destapo todo el tablero a la fuerza para que el jugador vea dónde estaban escondidas las minas
       for (int i = 0; i < tablero.getNivel().getNumFilas(); i++) {
         for (int j = 0; j < tablero.getNivel().getNumColumnas(); j++) {
           tablero.getCelda(i, j).setEstaRevelada(true);
@@ -189,8 +182,7 @@ public class Main {
         System.out.println("¡DETONACIÓN! Has pisado una mina. Juego terminado.");
       }
 
-      // Saco el nombre de la clase (por ejemplo, "Principiante") para guardarlo en
-      // texto
+      // Saco el nombre de la clase (por ejemplo, "Principiante") para guardarlo en texto
       String nombreDificultad = nivelActual.getClass().getSimpleName();
 
       // Empaqueto todos los datos de lo que acaba de pasar en un nuevo objeto Partida
@@ -213,7 +205,7 @@ public class Main {
 
       switch (opcionSalida) {
         case 1:
-          // No hace falta hacer nada especial, el ciclo principal volverá a arrancar solo
+          // El ciclo principal volverá a arrancar solo
         break;
         case 2:
           // Imprimo la lista de partidas ordenadas
@@ -291,8 +283,7 @@ public class Main {
       for (int j = 0; j < sizeColumnas; j++) {
         Celda celdaActual = tablero.getCelda(i, j);
 
-        // Reviso el estado de la celda y decido qué símbolo imprimir. A todos les sumo
-        // dos
+        // Reviso el estado de la celda y decido qué símbolo imprimir. A todos les sumo dos
         // espacios vacíos para que cuadren perfecto con los números de arriba.
         if (celdaActual.getBandera()) {
           System.out.print("⚑  ");

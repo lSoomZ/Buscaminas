@@ -16,6 +16,7 @@ public class Tablero {
         }
     }
 
+    //Get para obtener el nivel de dificultad del tablero
     public NivelDificultad getNivel() {
         return nivel;
     }

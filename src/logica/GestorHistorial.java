@@ -15,6 +15,7 @@ public class GestorHistorial {
         numPartidas = 0;
     }
 
+    // Metodo para agregar nuevas partidas al historial
     public void agregarPartida(Partida partida) {
         if (numPartidas < maxPartidas) {
             historial[numPartidas] = partida;
@@ -65,8 +66,7 @@ public class GestorHistorial {
         System.out.println("Dificultad | Tiempo (s) | Resultado | Tamaño | Minas");
         System.out.println("------------------------------------------------------");
 
-        // Recorro el arreglo usando 'numPartidas' para no tocar las casillas vacías
-        // (null)
+        // Recorro el arreglo usando 'numPartidas' para no tocar las casillas vacías (null)
         for (int i = 0; i < numPartidas; i++) {
             Partida p = historial[i];
             // Reviso el booleano del resultado para mostrar un texto amigable
