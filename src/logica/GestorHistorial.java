@@ -25,17 +25,15 @@ public class GestorHistorial {
     }
 
     public void ordenarPorTiempo() {
+        // variable temporal para el intercambio en la ordenación
+        Partida temp;
         // Si la cantidad de partidas es menor o igual a 1, no hay nada que ordenar
         if (numPartidas <= 1) {
             System.out.println("No hay partidas en el historial para ordenar.");
             return;
         }
 
-        // variable temporal para el intercambio
-        Partida temp;
-
         for (int i = 0; i < numPartidas - 1; i++) {
-
             for (int j = 0; j < numPartidas - i - 1; j++) {
                 int tiempoActual = historial[j].getTiempo();
                 int tiempoSiguiente = historial[j + 1].getTiempo();
@@ -55,8 +53,7 @@ public class GestorHistorial {
 
     // Método para mostrar en la pantalla todas las partidas que se han jugado
     public void mostrarHistorial() {
-        // Primero ordeno las partidas por tiempo para que los mejores récords salgan arriba
-        ordenarPorTiempo();
+        ordenarPorTiempo(); // Primero ordeno las partidas por tiempo
 
         // Si el contador está en cero significa que todavía no hay partidas guardadas
         if (numPartidas == 0) {
@@ -68,11 +65,11 @@ public class GestorHistorial {
         System.out.println("Dificultad | Tiempo (s) | Resultado | Tamaño | Minas");
         System.out.println("------------------------------------------------------");
 
-        // Recorro el arreglo usando 'numPartidas' para no tocar las casillas vacías (null)
+        // Recorro el arreglo usando 'numPartidas' para no tocar las casillas vacías
+        // (null)
         for (int i = 0; i < numPartidas; i++) {
             Partida p = historial[i];
-
-            // Reviso el booleano del resultado para mostrar un texto limpio en vez de true/false
+            // Reviso el booleano del resultado para mostrar un texto amigable
             String textoResultado = p.getResultado() ? "Ganada" : "Perdida";
 
             // Imprimo los datos de la partida en una sola línea
@@ -83,5 +80,34 @@ public class GestorHistorial {
                     p.getMinas());
         }
         System.out.println("------------------------------------------------------");
+    }
+
+    // Método para localizar una partida por su duración en segundos
+    public Partida buscarPartidaPorTiempo(int tiempoObjetivo) {
+        ordenarPorTiempo(); // Me aseguro que el arreglo esté en el orden correcto para la búsqueda binaria
+
+        // Inicialización de punteros basada exclusivamente en los datos válidos
+        int limiteInferior = 0;
+        int limiteSuperior = numPartidas - 1;
+
+        // El ciclo iterará dividiendo el arreglo hasta encontrar el dato o hasta que
+        // los límites se crucen
+        while (limiteInferior <= limiteSuperior) {
+            int indiceMedio = limiteInferior + (limiteSuperior - limiteInferior) / 2;
+            // Extracción del atributo sobre el cual se basará la comparación
+            int tiempoMedio = historial[indiceMedio].getTiempo(); 
+
+            // Casos base de la Búsqueda Binaria
+            if (tiempoMedio == tiempoObjetivo) {
+                return historial[indiceMedio]; // Retorna la referencia de memoria del objeto encontrado
+
+            } else if (tiempoMedio < tiempoObjetivo) {
+                limiteInferior = indiceMedio + 1; // Descarta la mitad izquierda. Se mueve el límite inferior
+
+            } else {
+                limiteSuperior = indiceMedio - 1; // Descarta la mitad derecha. Se mueve el límite superior
+            }
+        }
+        return null;
     }
 }

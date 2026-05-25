@@ -52,31 +52,32 @@ public class Main {
             break;
           case 4:
             System.out.print("Ingrese número de filas: ");
-            int f = orden.nextInt();
+            int filas = orden.nextInt();
             System.out.print("Ingrese número de columnas: ");
-            int c = orden.nextInt();
+            int columnas = orden.nextInt();
 
             // Calculo el máximo de minas permitidas para dejar al menos una casilla libre y
             // poder ganar
-            int limiteMinas = (f * c) - 1;
-            int m;
+            int limiteMinas = (filas * columnas) - 1;
+            int minas;
 
             // Si intenta poner más minas que el espacio disponible, le vuelvo a preguntar
             do {
               System.out.print("Ingrese número de minas (entre 1 y " + limiteMinas + "): ");
-              m = orden.nextInt();
+              minas = orden.nextInt();
 
-              if (m < 1 || m > limiteMinas) {
+              if (minas < 1 || minas > limiteMinas) {
                 System.out
-                    .println("Error: No puedes poner esa cantidad de minas en un tablero de " + f + "x" + c + ".");
+                    .println("Error: No puedes poner esa cantidad de minas en un tablero de " + filas + "x" + columnas
+                        + ".");
               }
-            } while (m < 1 || m > limiteMinas);
+            } while (minas < 1 || minas > limiteMinas);
 
             // Creo el nivel a la medida con los datos que ingresó
-            nivelActual = new Personalizado(f, c, m);
+            nivelActual = new Personalizado(filas, columnas, minas);
             break;
           case 5:
-            //Imprimo la lista de partidas ordenadas
+            // Imprimo la lista de partidas ordenadas
             gestorHistorial.mostrarHistorial();
             break;
 
@@ -170,7 +171,8 @@ public class Main {
 
       System.out.println("\n=================================");
 
-      // Destapo todo el tablero a la fuerza para que el jugador vea dónde estaban escondidas las minas
+      // Destapo todo el tablero a la fuerza para que el jugador vea dónde estaban
+      // escondidas las minas
       for (int i = 0; i < tablero.getNivel().getNumFilas(); i++) {
         for (int j = 0; j < tablero.getNivel().getNumColumnas(); j++) {
           tablero.getCelda(i, j).setEstaRevelada(true);
@@ -187,7 +189,8 @@ public class Main {
         System.out.println("¡DETONACIÓN! Has pisado una mina. Juego terminado.");
       }
 
-      // Saco el nombre de la clase (por ejemplo, "Principiante") para guardarlo en texto
+      // Saco el nombre de la clase (por ejemplo, "Principiante") para guardarlo en
+      // texto
       String nombreDificultad = nivelActual.getClass().getSimpleName();
 
       // Empaqueto todos los datos de lo que acaba de pasar en un nuevo objeto Partida
@@ -202,31 +205,59 @@ public class Main {
       do {
         System.out.println("\n--- ¿QUÉ DESEAS HACER AHORA? ---");
         System.out.println("1. Volver a jugar");
-        System.out.println("2. Ver el historial de partidas");
+        System.out.println("2. Ver el historial completo");
         System.out.println("3. Salir del programa");
+        System.out.println("4. Buscar partida por tiempo"); // Nueva opción agregada
         System.out.print("Seleccione una opción: ");
         opcionSalida = orden.nextInt();
 
-        switch (opcionSalida) {
-          case 1:
-            //El ciclo principal volverá a arrancar
-            break;
-          case 2:
-            // Imprimo la lista de partidas ordenadas
-            gestorHistorial.mostrarHistorial();
-            // Pongo la opción en 0 para obligar al menú a mostrarse de nuevo
-            opcionSalida = 0;
-            break;
-          case 3:
-            // Apago la variable principal para que el programa termine
-            System.out.println("Gracias por jugar. Cerrando sistema.");
-            programaActivo = false; 
-            break;
-          default:
-            System.out.println("Opción inválida.");
-            break;
+      switch (opcionSalida) {
+        case 1:
+          // No hace falta hacer nada especial, el ciclo principal volverá a arrancar solo
+        break;
+        case 2:
+          // Imprimo la lista de partidas ordenadas
+          gestorHistorial.mostrarHistorial();
+          // Pongo la opción en 0 para obligar al menú a mostrarse de nuevo
+          opcionSalida = 0; 
+        break;
+        case 3:
+          System.out.println("Gracias por jugar. Cerrando sistema.");
+          programaActivo = false; // Apago la variable principal para que el programa termine
+        break;
+        case 4:
+          // Le pido al usuario el número exacto que quiere buscar
+          System.out.print("Ingresa el tiempo en segundos que quieres buscar: ");
+          int tiempoBuscado = orden.nextInt();
+
+          // Llamo a mi método de búsqueda binaria y guardo lo que me devuelva
+          Partida partidaEncontrada = gestorHistorial.buscarPartidaPorTiempo(tiempoBuscado);
+
+          // Si me devuelve algo que no sea nulo, significa que la encontró y muestro los datos
+          if (partidaEncontrada != null) {
+            System.out.println("\n¡Partida encontrada en el historial!"); 
+
+            // Transformo el booleano en texto para que sea más fácil de leer
+            String resultadoTexto = partidaEncontrada.getResultado() ? "Ganada" : "Perdida";
+
+            System.out.println("Dificultad: " + partidaEncontrada.getDificultad());
+            System.out.println("Tiempo: " + partidaEncontrada.getTiempo() + "s");
+            System.out.println("Resultado: " + resultadoTexto);
+            System.out.println("Tablero: " + partidaEncontrada.getFilas() + "x" + partidaEncontrada.getColumnas() + " con " + partidaEncontrada.getMinas() + " minas");
+          } else {
+            // Si el método me devolvió nulo, el tiempo no existe en el arreglo
+            System.out.println("\nBúsqueda fallida: No hay ninguna partida registrada con un tiempo exacto de " + tiempoBuscado + " segundos.");
+            }
+                        
+          // Obligo al menú a repetirse para que el jugador pueda seguir buscando o decida salir
+          opcionSalida = 0;
+        break;
+        default:
+          System.out.println("Opción inválida.");
+          break;
         }
-      } while (opcionSalida < 1 || opcionSalida > 3);
+      } 
+      while (opcionSalida < 1 || opcionSalida > 4);
     }
   }
 
@@ -235,13 +266,13 @@ public class Main {
     int sizeFilas = tablero.getNivel().getNumFilas();
     int sizeColumnas = tablero.getNivel().getNumColumnas();
 
-    //Espacio en blanco al inicio para alinear las columnas con la cuadricula
+    // Espacio en blanco al inicio para alinear las columnas con la cuadricula
     System.out.print("    ");
 
     // Dibujo los números de la cabecera (las columnas)
     for (int j = 0; j < sizeColumnas; j++) {
       if (j < 10) {
-        System.out.print(j + "  "); 
+        System.out.print(j + "  ");
       } else {
         System.out.print(j + " ");
       }
@@ -260,7 +291,8 @@ public class Main {
       for (int j = 0; j < sizeColumnas; j++) {
         Celda celdaActual = tablero.getCelda(i, j);
 
-        // Reviso el estado de la celda y decido qué símbolo imprimir. A todos les sumo dos 
+        // Reviso el estado de la celda y decido qué símbolo imprimir. A todos les sumo
+        // dos
         // espacios vacíos para que cuadren perfecto con los números de arriba.
         if (celdaActual.getBandera()) {
           System.out.print("⚑  ");
@@ -269,12 +301,12 @@ public class Main {
         } else if (celdaActual.getEsMina()) {
           System.out.print("¤  ");
         } else if (celdaActual.getMinasAlrededor() == 0) {
-          System.out.print("   "); 
+          System.out.print("   ");
         } else {
-          System.out.print(celdaActual.getMinasAlrededor() + "  "); 
+          System.out.print(celdaActual.getMinasAlrededor() + "  ");
         }
       }
-      System.out.println(); //Salto de línea al terminar la fila
+      System.out.println(); // Salto de línea al terminar la fila
     }
   }
 }
