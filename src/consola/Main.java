@@ -251,6 +251,7 @@ public class Main {
       } 
       while (opcionSalida < 1 || opcionSalida > 4);
     }
+    orden.close(); // Cierro el scanner al final para evitar fugas de memoria
   }
 
   // Metodo para imprimir el tablero en consola usando caracteres especiales
