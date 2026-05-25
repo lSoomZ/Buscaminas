@@ -2,12 +2,10 @@ package logica;
 import java.util.Random;
 import modelos.Tablero;
 import modelos.Celda;
-import modelos.NivelDificultad;
 
 public class MotorJuego {
 
     public void distribuirMinas(Tablero tablero) {
-
         int minasPedidas = tablero.getNivel().getNumMinas();
         int filas = tablero.getNivel().getNumFilas();
         int columnas = tablero.getNivel().getNumColumnas();

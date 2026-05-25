@@ -1,12 +1,13 @@
 package logica;
+
 import modelos.Partida;
 
 public class GestorHistorial {
-    //Arreglo de partidas para guardar el historial de las partidas jugadas
+    // Arreglo de partidas para guardar el historial de las partidas jugadas
     private Partida[] historial;
-    //Numero de partidas que hay hasta el momento
+    // Numero de partidas que hay hasta el momento
     private int numPartidas;
-    //numero maximo de partidas que se pueden guardar en el historial
+    // numero maximo de partidas que se pueden guardar en el historial
     private final int maxPartidas = 100;
 
     public GestorHistorial() {
@@ -14,8 +15,8 @@ public class GestorHistorial {
         numPartidas = 0;
     }
 
-    public void agregarPartida(Partida partida){
-          if( numPartidas < maxPartidas){
+    public void agregarPartida(Partida partida) {
+        if (numPartidas < maxPartidas) {
             historial[numPartidas] = partida;
             numPartidas++;
         } else {
@@ -23,18 +24,18 @@ public class GestorHistorial {
         }
     }
 
-    public void ordenarPorTiempo(){
-        //Si la cantidad de partidas es menor o igual a 1, no hay nada que ordenar
+    public void ordenarPorTiempo() {
+        // Si la cantidad de partidas es menor o igual a 1, no hay nada que ordenar
         if (numPartidas <= 1) {
             System.out.println("No hay partidas en el historial para ordenar.");
             return;
         }
 
-        //variable temporal para el intercambio
+        // variable temporal para el intercambio
         Partida temp;
 
         for (int i = 0; i < numPartidas - 1; i++) {
-     
+
             for (int j = 0; j < numPartidas - i - 1; j++) {
                 int tiempoActual = historial[j].getTiempo();
                 int tiempoSiguiente = historial[j + 1].getTiempo();
@@ -44,11 +45,43 @@ public class GestorHistorial {
                     // Paso 1: Resguardar el objeto actual
                     temp = historial[j];
                     // Paso 2: Sobrescribir la posición actual con el objeto siguiente
-                    historial[j] = historial[j + 1];                   
+                    historial[j] = historial[j + 1];
                     // Paso 3: Asignar el objeto resguardado a la posición siguiente
                     historial[j + 1] = temp;
                 }
             }
         }
+    }
+
+    // Método para mostrar en la pantalla todas las partidas que se han jugado
+    public void mostrarHistorial() {
+        // Primero ordeno las partidas por tiempo para que los mejores récords salgan arriba
+        ordenarPorTiempo();
+
+        // Si el contador está en cero significa que todavía no hay partidas guardadas
+        if (numPartidas == 0) {
+            System.out.println("\nEl historial está vacío. Juega una partida primero.");
+            return;
+        }
+
+        System.out.println("\n=== HISTORIAL DE PARTIDAS (Ordenado por mejor tiempo) ===");
+        System.out.println("Dificultad | Tiempo (s) | Resultado | Tamaño | Minas");
+        System.out.println("------------------------------------------------------");
+
+        // Recorro el arreglo usando 'numPartidas' para no tocar las casillas vacías (null)
+        for (int i = 0; i < numPartidas; i++) {
+            Partida p = historial[i];
+
+            // Reviso el booleano del resultado para mostrar un texto limpio en vez de true/false
+            String textoResultado = p.getResultado() ? "Ganada" : "Perdida";
+
+            // Imprimo los datos de la partida en una sola línea
+            System.out.println(p.getDificultad() + " | " +
+                    p.getTiempo() + "s | " +
+                    textoResultado + " | " +
+                    p.getFilas() + "x" + p.getColumnas() + " | " +
+                    p.getMinas());
+        }
+        System.out.println("------------------------------------------------------");
     }
 }
